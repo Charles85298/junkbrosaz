@@ -56,79 +56,55 @@
   const galleryCounter = document.getElementById('galleryCounter');
   const galleryCaption = document.getElementById('galleryCaption');
   const galleryThumbnails = document.getElementById('galleryThumbnails');
-  const galleryGrid = document.getElementById('serviceGalleryGrid');
-  const galleryFilters = document.getElementById('galleryFilters');
-  const galleryCache = new Map();
+  const galleryGrid = document.getElementById('galleryCategoryGrid');
+  const galleryMap = new Map();
   let activeGallery = null;
   let activeIndex = 0;
 
   function escapeHtml(value = '') {
-    return String(value).replace(/[&<>"']/g, character => ({
+    return String(value).replace(/[&<>"']/g, char => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-    })[character]);
-  }
-
-  function titleFromSlug(slug) {
-    return window.SERVICE_GALLERY_TITLES?.[slug]
-      || slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    })[char]);
   }
 
   function renderGalleryCards(galleries) {
     if (!galleryGrid) return;
     if (!galleries.length) {
-      galleryGrid.innerHTML = '<p class="gallery-empty">Project photos are coming soon.</p>';
+      galleryGrid.innerHTML = '<div class="gallery-loading-card">No gallery folders were found.</div>';
       return;
     }
-    galleryGrid.innerHTML = galleries.map(gallery => `
-      <button class="service-gallery-card reveal visible" type="button" data-gallery="${escapeHtml(gallery.slug)}" aria-label="Open ${escapeHtml(gallery.title)} gallery">
-        <img src="${escapeHtml(gallery.cover)}" alt="${escapeHtml(gallery.title)} gallery cover" loading="lazy" decoding="async">
-        <span class="gallery-card-overlay"><strong>${escapeHtml(gallery.title)}</strong><small>View gallery</small></span>
-        <span class="photo-count">${gallery.count} photo${gallery.count === 1 ? '' : 's'}</span>
-      </button>`).join('');
+
+    galleryGrid.innerHTML = galleries.map((gallery, index) => {
+      galleryMap.set(gallery.slug, gallery);
+      const cover = gallery.cover
+        ? `<img src="${escapeHtml(gallery.cover)}" alt="${escapeHtml(gallery.title)} project" loading="lazy" decoding="async">`
+        : `<div class="gallery-card-placeholder" aria-hidden="true">${escapeHtml(gallery.icon || '•')}</div>`;
+      const count = `${gallery.count} photo${gallery.count === 1 ? '' : 's'}`;
+      return `<button class="gallery-category-card reveal visible" type="button" data-gallery="${escapeHtml(gallery.slug)}" aria-label="Open ${escapeHtml(gallery.title)} gallery">
+        <span class="gallery-category-media">${cover}<span class="gallery-count-badge">${count}</span></span>
+        <span class="gallery-category-copy">
+          <span class="gallery-category-icon" aria-hidden="true">${escapeHtml(gallery.icon || '•')}</span>
+          <span><strong>${escapeHtml(gallery.title)}</strong><small>View completed jobs</small></span>
+          <span class="gallery-category-arrow" aria-hidden="true">→</span>
+        </span>
+      </button>`;
+    }).join('');
+
     galleryGrid.querySelectorAll('[data-gallery]').forEach(card => {
       card.addEventListener('click', () => openServiceGallery(card.dataset.gallery));
-    });
-  }
-
-  function renderFilters(galleries) {
-    if (!galleryFilters) return;
-    const filters = [{ slug: 'all', title: 'All services' }, ...galleries.map(g => ({ slug: g.slug, title: g.title }))];
-    galleryFilters.innerHTML = filters.map((filter, index) => `
-      <button type="button" class="gallery-filter${index === 0 ? ' active' : ''}" data-filter="${escapeHtml(filter.slug)}">${escapeHtml(filter.title)}</button>`).join('');
-    galleryFilters.addEventListener('click', event => {
-      const button = event.target.closest('[data-filter]');
-      if (!button) return;
-      galleryFilters.querySelectorAll('.gallery-filter').forEach(item => item.classList.toggle('active', item === button));
-      const filter = button.dataset.filter;
-      galleryGrid.querySelectorAll('[data-gallery]').forEach(card => {
-        card.hidden = filter !== 'all' && card.dataset.gallery !== filter;
-      });
     });
   }
 
   async function loadGalleryManifest() {
     try {
       const response = await fetch(`/assets/data/galleries.json?v=${Date.now()}`, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`Manifest returned ${response.status}`);
+      if (!response.ok) throw new Error(`Gallery manifest returned ${response.status}`);
       const data = await response.json();
-      const galleries = (data.galleries || []).filter(gallery => gallery.count > 0);
-      galleries.forEach(gallery => galleryCache.set(gallery.slug, gallery));
-      renderGalleryCards(galleries);
-      renderFilters(galleries);
+      renderGalleryCards(Array.isArray(data.galleries) ? data.galleries : []);
     } catch (error) {
-      console.error('Could not load gallery manifest.', error);
-      if (galleryGrid) galleryGrid.innerHTML = '<p class="gallery-empty">Project photos are temporarily unavailable.</p>';
+      console.error(error);
+      if (galleryGrid) galleryGrid.innerHTML = '<div class="gallery-loading-card">The galleries are temporarily unavailable. Please refresh the page.</div>';
     }
-  }
-
-  function setGalleryLoading(title) {
-    galleryTitle.textContent = title;
-    galleryMainImage.removeAttribute('src');
-    galleryMainImage.alt = '';
-    galleryMainImage.hidden = true;
-    galleryCounter.textContent = '';
-    galleryCaption.textContent = 'Loading photos…';
-    galleryThumbnails.innerHTML = '';
   }
 
   function showGalleryImage(index) {
@@ -146,54 +122,53 @@
       button.setAttribute('aria-current', i === activeIndex ? 'true' : 'false');
       if (i === activeIndex) button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     });
-    const next = images[(activeIndex + 1) % images.length];
-    if (next) new Image().src = next.url;
-  }
-
-  function renderGallery(gallery) {
-    activeGallery = gallery;
-    galleryTitle.textContent = gallery.title;
-    galleryThumbnails.innerHTML = '';
-    if (!gallery.images.length) {
-      galleryMainImage.hidden = true;
-      galleryCounter.textContent = '0 photos';
-      galleryCaption.textContent = 'No photos have been uploaded to this service gallery yet.';
-      return;
-    }
-    gallery.images.forEach((imageData, index) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.setAttribute('aria-label', `View photo ${index + 1}`);
-      const image = document.createElement('img');
-      image.src = imageData.url;
-      image.alt = '';
-      image.loading = 'lazy';
-      image.decoding = 'async';
-      button.appendChild(image);
-      button.addEventListener('click', () => showGalleryImage(index));
-      galleryThumbnails.appendChild(button);
-    });
-    showGalleryImage(0);
   }
 
   function openServiceGallery(slug) {
-    const gallery = galleryCache.get(slug) || { slug, title: titleFromSlug(slug), images: [] };
-    setGalleryLoading(gallery.title);
+    const gallery = galleryMap.get(slug);
+    if (!gallery || !galleryDialog) return;
+    activeGallery = gallery;
+    activeIndex = 0;
+    galleryTitle.textContent = gallery.title;
+    galleryThumbnails.innerHTML = '';
+
+    if (!gallery.images?.length) {
+      galleryMainImage.hidden = true;
+      galleryMainImage.removeAttribute('src');
+      galleryCounter.textContent = '0 photos';
+      galleryCaption.textContent = 'Photos for this service are coming soon.';
+    } else {
+      gallery.images.forEach((imageData, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', `View photo ${index + 1}`);
+        const image = document.createElement('img');
+        image.src = imageData.url;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        button.appendChild(image);
+        button.addEventListener('click', () => showGalleryImage(index));
+        galleryThumbnails.appendChild(button);
+      });
+      showGalleryImage(0);
+    }
+
     galleryDialog.showModal();
     document.body.classList.add('gallery-open');
-    renderGallery(gallery);
   }
 
   document.getElementById('galleryPrev')?.addEventListener('click', () => showGalleryImage(activeIndex - 1));
   document.getElementById('galleryNext')?.addEventListener('click', () => showGalleryImage(activeIndex + 1));
   document.getElementById('galleryDialogClose')?.addEventListener('click', () => galleryDialog.close());
   galleryDialog?.addEventListener('close', () => document.body.classList.remove('gallery-open'));
-  galleryDialog?.addEventListener('click', event => { if (event.target === galleryDialog) galleryDialog.close(); });
+  galleryDialog?.addEventListener('click', event => {
+    if (event.target === galleryDialog) galleryDialog.close();
+  });
   document.addEventListener('keydown', event => {
     if (!galleryDialog?.open || !activeGallery?.images?.length) return;
     if (event.key === 'ArrowLeft') showGalleryImage(activeIndex - 1);
     if (event.key === 'ArrowRight') showGalleryImage(activeIndex + 1);
-    if (event.key === 'Escape') galleryDialog.close();
   });
 
   loadGalleryManifest();
