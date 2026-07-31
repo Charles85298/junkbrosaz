@@ -5,9 +5,46 @@
       "slug": "services",
       "title": "Our Service Work",
       "icon": "\u2605",
-      "count": 0,
-      "cover": null,
-      "images": []
+      "count": 9,
+      "cover": "/assets/images/services/appliances-and-heavy-items-od_photo-1338_singular_display_fullPicture.jpeg",
+      "images": [
+        {
+          "url": "/assets/images/services/appliances-and-heavy-items-od_photo-1338_singular_display_fullPicture.jpeg",
+          "name": "Appliances And Heavy Items Od Photo 1338 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/appliances-and-heavy-items-od_photo-1340_singular_display_fullPicture.jpeg",
+          "name": "Appliances And Heavy Items Od Photo 1340 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/home-cleanouts-361FBB7B-0A6E-48E4-89AB-C10372BCC361.jpeg",
+          "name": "Home Cleanouts 361Fbb7B 0A6E 48E4 89Ab C10372Bcc361"
+        },
+        {
+          "url": "/assets/images/services/home-cleanouts-IMG_1294.jpeg",
+          "name": "Home Cleanouts Img 1294"
+        },
+        {
+          "url": "/assets/images/services/home-cleanouts-IMG_1296.jpeg",
+          "name": "Home Cleanouts Img 1296"
+        },
+        {
+          "url": "/assets/images/services/home-cleanouts-IMG_1354.jpeg",
+          "name": "Home Cleanouts Img 1354"
+        },
+        {
+          "url": "/assets/images/services/yard-and-outdoor-debris-photo-520_singular_display_fullPicture.jpeg",
+          "name": "Yard And Outdoor Debris Photo 520 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/yard-and-outdoor-debris-photo-539_singular_display_fullPicture.jpeg",
+          "name": "Yard And Outdoor Debris Photo 539 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/yard-and-outdoor-debris-photo-666_singular_display_fullPicture.jpeg",
+          "name": "Yard And Outdoor Debris Photo 666 Singular Display Fullpicture"
+        }
+      ]
     }
   ]
 }
