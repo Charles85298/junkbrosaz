@@ -63,6 +63,27 @@
           "name": "Photo 666 Singular Display Fullpicture"
         }
       ]
+    },
+    {
+      "slug": "your-junk-removed",
+      "title": "Your Junk Removed",
+      "icon": "\u2022",
+      "count": 3,
+      "cover": "/assets/images/services/your-junk-removed/photo-520_singular_display_fullPicture.jpeg",
+      "images": [
+        {
+          "url": "/assets/images/services/your-junk-removed/photo-520_singular_display_fullPicture.jpeg",
+          "name": "Photo 520 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/your-junk-removed/photo-539_singular_display_fullPicture.jpeg",
+          "name": "Photo 539 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/your-junk-removed/photo-666_singular_display_fullPicture.jpeg",
+          "name": "Photo 666 Singular Display Fullpicture"
+        }
+      ]
     }
   ]
 }
