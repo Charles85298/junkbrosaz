@@ -280,3 +280,15 @@ body.gallery-open{overflow:hidden}
 .payment-methods span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-size:.86rem;font-weight:800}
 .payment-options small{display:block;margin-top:13px;color:#b9cbe0}
 
+
+/* One-folder service gallery */
+.gallery-category-grid:has(.gallery-category-card:only-child){
+  grid-template-columns:minmax(0,760px);
+  justify-content:center;
+}
+.gallery-category-grid .gallery-category-card:only-child .gallery-category-media{
+  height:clamp(260px,42vw,430px);
+}
+.gallery-category-grid .gallery-category-card:only-child .gallery-category-copy{
+  padding:20px 22px;
+}
