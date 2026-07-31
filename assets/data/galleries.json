@@ -5,44 +5,56 @@
       "slug": "services",
       "title": "Our Service Work",
       "icon": "\u2605",
-      "count": 9,
-      "cover": "/assets/images/services/appliances-and-heavy-items-od_photo-1338_singular_display_fullPicture.jpeg",
+      "count": 12,
+      "cover": "/assets/images/services/361FBB7B-0A6E-48E4-89AB-C10372BCC361.jpeg",
       "images": [
         {
-          "url": "/assets/images/services/appliances-and-heavy-items-od_photo-1338_singular_display_fullPicture.jpeg",
-          "name": "Appliances And Heavy Items Od Photo 1338 Singular Display Fullpicture"
+          "url": "/assets/images/services/361FBB7B-0A6E-48E4-89AB-C10372BCC361.jpeg",
+          "name": "361Fbb7B 0A6E 48E4 89Ab C10372Bcc361"
         },
         {
-          "url": "/assets/images/services/appliances-and-heavy-items-od_photo-1340_singular_display_fullPicture.jpeg",
-          "name": "Appliances And Heavy Items Od Photo 1340 Singular Display Fullpicture"
+          "url": "/assets/images/services/IMG_1554.png",
+          "name": "Img 1554"
         },
         {
-          "url": "/assets/images/services/home-cleanouts-361FBB7B-0A6E-48E4-89AB-C10372BCC361.jpeg",
-          "name": "Home Cleanouts 361Fbb7B 0A6E 48E4 89Ab C10372Bcc361"
+          "url": "/assets/images/services/IMG_1585.jpeg",
+          "name": "Img 1585"
         },
         {
-          "url": "/assets/images/services/home-cleanouts-IMG_1294.jpeg",
-          "name": "Home Cleanouts Img 1294"
+          "url": "/assets/images/services/IMG_2073.jpeg",
+          "name": "Img 2073"
         },
         {
-          "url": "/assets/images/services/home-cleanouts-IMG_1296.jpeg",
-          "name": "Home Cleanouts Img 1296"
+          "url": "/assets/images/services/IMG_3119.jpeg",
+          "name": "Img 3119"
         },
         {
-          "url": "/assets/images/services/home-cleanouts-IMG_1354.jpeg",
-          "name": "Home Cleanouts Img 1354"
+          "url": "/assets/images/services/IMG_3123.jpeg",
+          "name": "Img 3123"
         },
         {
-          "url": "/assets/images/services/yard-and-outdoor-debris-photo-520_singular_display_fullPicture.jpeg",
-          "name": "Yard And Outdoor Debris Photo 520 Singular Display Fullpicture"
+          "url": "/assets/images/services/IMG_3124.jpeg",
+          "name": "Img 3124"
         },
         {
-          "url": "/assets/images/services/yard-and-outdoor-debris-photo-539_singular_display_fullPicture.jpeg",
-          "name": "Yard And Outdoor Debris Photo 539 Singular Display Fullpicture"
+          "url": "/assets/images/services/IMG_3125.jpeg",
+          "name": "Img 3125"
         },
         {
-          "url": "/assets/images/services/yard-and-outdoor-debris-photo-666_singular_display_fullPicture.jpeg",
-          "name": "Yard And Outdoor Debris Photo 666 Singular Display Fullpicture"
+          "url": "/assets/images/services/IMG_3126.jpeg",
+          "name": "Img 3126"
+        },
+        {
+          "url": "/assets/images/services/IMG_3127.jpeg",
+          "name": "Img 3127"
+        },
+        {
+          "url": "/assets/images/services/IMG_3128.jpeg",
+          "name": "Img 3128"
+        },
+        {
+          "url": "/assets/images/services/photo-858_singular_display_fullPicture.jpeg",
+          "name": "Photo 858 Singular Display Fullpicture"
         }
       ]
     }
