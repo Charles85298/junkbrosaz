@@ -1,12 +1,10 @@
-name = "az-junk-brothers"
-compatibility_date = "2026-07-31"
-pages_build_output_dir = "."
-
-[[r2_buckets]]
-binding = "GALLERY_BUCKET"
-bucket_name = "YOUR_R2_BUCKET_NAME"
-
-[vars]
-# Use the public R2 custom domain or the public r2.dev URL.
-# Do not add a trailing slash.
-GALLERY_PUBLIC_BASE_URL = "https://gallery.azjunkbrothers.com"
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" role="img" aria-labelledby="t d">
+<title id="t">Furniture Removal</title><desc id="d">Couches, tables, mattresses and more</desc>
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c41230"/><stop offset="1" stop-color="#ffd018"/></linearGradient></defs>
+<rect width="1200" height="820" fill="url(#g)"/>
+<path d="M0 610 L260 430 L420 550 L630 330 L890 540 L1200 390 L1200 820 L0 820Z" fill="#081b33" opacity=".72"/>
+<circle cx="1030" cy="145" r="82" fill="#ffd018" opacity=".9"/>
+<text x="70" y="112" font-family="Arial,Helvetica,sans-serif" font-size="52" font-weight="800" fill="white">Furniture Removal</text>
+<text x="70" y="174" font-family="Arial,Helvetica,sans-serif" font-size="29" fill="white" opacity=".92">Couches, tables, mattresses and more</text>
+<text x="70" y="760" font-family="Arial,Helvetica,sans-serif" font-size="26" fill="white" opacity=".86">Replace this placeholder with a real project photo</text>
+</svg>
