@@ -56,84 +56,68 @@
   const galleryCounter = document.getElementById('galleryCounter');
   const galleryCaption = document.getElementById('galleryCaption');
   const galleryThumbnails = document.getElementById('galleryThumbnails');
+  const galleryGrid = document.getElementById('serviceGalleryGrid');
+  const galleryFilters = document.getElementById('galleryFilters');
   const galleryCache = new Map();
   let activeGallery = null;
   let activeIndex = 0;
 
-  function localFallback(slug) {
-    const gallery = window.SERVICE_GALLERIES?.[slug];
-    if (!gallery) return null;
-    return {
-      title: gallery.title,
-      images: gallery.images.map((url, index) => ({
-        url,
-        name: `${gallery.title} ${index + 1}`
-      })),
-      source: 'local-fallback'
-    };
+  function escapeHtml(value = '') {
+    return String(value).replace(/[&<>"']/g, character => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    })[character]);
   }
 
-  function titleFromCard(slug) {
-    return document.querySelector(`[data-gallery="${slug}"] strong`)?.textContent?.trim()
+  function titleFromSlug(slug) {
+    return window.SERVICE_GALLERY_TITLES?.[slug]
       || slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
-  async function loadGalleryManifest() {
-    const response = await fetch(`/assets/data/gallery-manifest.json?t=${Date.now()}`, {
-      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
-      cache: 'no-store'
-    });
-    if (!response.ok) throw new Error(`Gallery manifest returned ${response.status}`);
-    return response.json();
-  }
-
-  async function fetchAllGalleries() {
-    try {
-      const data = await loadGalleryManifest();
-
-      Object.entries(data.galleries || {}).forEach(([slug, gallery]) => {
-        galleryCache.set(slug, {
-          title: gallery.title || titleFromCard(slug),
-          images: Array.isArray(gallery.images) ? gallery.images : [],
-          source: 'github-manifest'
-        });
-      });
-
-      document.querySelectorAll('[data-gallery]').forEach(card => {
-        const slug = card.dataset.gallery;
-        const gallery = galleryCache.get(slug);
-        const cover = card.querySelector('img');
-        const count = card.querySelector('.photo-count');
-
-        if (gallery?.images?.length) {
-          if (cover) cover.src = gallery.images[0].url;
-          if (count) count.textContent = `${gallery.images.length} photo${gallery.images.length === 1 ? '' : 's'}`;
-        } else if (count) {
-          count.textContent = '0 photos';
-        }
-      });
-    } catch (error) {
-      console.info('Dynamic gallery manifest is unavailable; using local fallback images.', error);
+  function renderGalleryCards(galleries) {
+    if (!galleryGrid) return;
+    if (!galleries.length) {
+      galleryGrid.innerHTML = '<p class="gallery-empty">Project photos are coming soon.</p>';
+      return;
     }
+    galleryGrid.innerHTML = galleries.map(gallery => `
+      <button class="service-gallery-card reveal visible" type="button" data-gallery="${escapeHtml(gallery.slug)}" aria-label="Open ${escapeHtml(gallery.title)} gallery">
+        <img src="${escapeHtml(gallery.cover)}" alt="${escapeHtml(gallery.title)} gallery cover" loading="lazy" decoding="async">
+        <span class="gallery-card-overlay"><strong>${escapeHtml(gallery.title)}</strong><small>View gallery</small></span>
+        <span class="photo-count">${gallery.count} photo${gallery.count === 1 ? '' : 's'}</span>
+      </button>`).join('');
+    galleryGrid.querySelectorAll('[data-gallery]').forEach(card => {
+      card.addEventListener('click', () => openServiceGallery(card.dataset.gallery));
+    });
   }
 
-  async function getGallery(slug) {
-    if (galleryCache.has(slug)) return galleryCache.get(slug);
+  function renderFilters(galleries) {
+    if (!galleryFilters) return;
+    const filters = [{ slug: 'all', title: 'All services' }, ...galleries.map(g => ({ slug: g.slug, title: g.title }))];
+    galleryFilters.innerHTML = filters.map((filter, index) => `
+      <button type="button" class="gallery-filter${index === 0 ? ' active' : ''}" data-filter="${escapeHtml(filter.slug)}">${escapeHtml(filter.title)}</button>`).join('');
+    galleryFilters.addEventListener('click', event => {
+      const button = event.target.closest('[data-filter]');
+      if (!button) return;
+      galleryFilters.querySelectorAll('.gallery-filter').forEach(item => item.classList.toggle('active', item === button));
+      const filter = button.dataset.filter;
+      galleryGrid.querySelectorAll('[data-gallery]').forEach(card => {
+        card.hidden = filter !== 'all' && card.dataset.gallery !== filter;
+      });
+    });
+  }
 
+  async function loadGalleryManifest() {
     try {
-      const data = await loadGalleryManifest();
-      const item = data.galleries?.[slug];
-      if (!item) return localFallback(slug);
-
-      const gallery = {
-        title: item.title || titleFromCard(slug),
-        images: Array.isArray(item.images) ? item.images : [],
-        source: 'github-manifest'
-      };
-      galleryCache.set(slug, gallery);
-      return gallery;
+      const response = await fetch(`/assets/data/galleries.json?v=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Manifest returned ${response.status}`);
+      const data = await response.json();
+      const galleries = (data.galleries || []).filter(gallery => gallery.count > 0);
+      galleries.forEach(gallery => galleryCache.set(gallery.slug, gallery));
+      renderGalleryCards(galleries);
+      renderFilters(galleries);
     } catch (error) {
-      return localFallback(slug);
+      console.error('Could not load gallery manifest.', error);
+      if (galleryGrid) galleryGrid.innerHTML = '<p class="gallery-empty">Project photos are temporarily unavailable.</p>';
     }
   }
 
@@ -152,34 +136,16 @@
     const images = activeGallery.images;
     activeIndex = (index + images.length) % images.length;
     const selected = images[activeIndex];
-
     galleryMainImage.hidden = false;
-    galleryMainImage.onerror = async () => {
-      galleryMainImage.hidden = true;
-      let detail = 'The image endpoint did not return a displayable image.';
-      try {
-        const check = await fetch(selected.url, { cache: 'no-store' });
-        const message = await check.text();
-        detail = `Image request failed (${check.status}). ${message || detail}`;
-      } catch (_) {
-        detail = 'The browser could not reach the image endpoint.';
-      }
-      galleryCaption.textContent = detail;
-    };
-    galleryMainImage.onload = () => {
-      galleryMainImage.hidden = false;
-    };
     galleryMainImage.src = selected.url;
     galleryMainImage.alt = `${activeGallery.title} photo ${activeIndex + 1}`;
     galleryCounter.textContent = `${activeIndex + 1} / ${images.length}`;
     galleryCaption.textContent = selected.name || activeGallery.title;
-
     galleryThumbnails.querySelectorAll('button').forEach((button, i) => {
       button.classList.toggle('active', i === activeIndex);
       button.setAttribute('aria-current', i === activeIndex ? 'true' : 'false');
       if (i === activeIndex) button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     });
-
     const next = images[(activeIndex + 1) % images.length];
     if (next) new Image().src = next.url;
   }
@@ -188,14 +154,12 @@
     activeGallery = gallery;
     galleryTitle.textContent = gallery.title;
     galleryThumbnails.innerHTML = '';
-
     if (!gallery.images.length) {
       galleryMainImage.hidden = true;
       galleryCounter.textContent = '0 photos';
       galleryCaption.textContent = 'No photos have been uploaded to this service gallery yet.';
       return;
     }
-
     gallery.images.forEach((imageData, index) => {
       const button = document.createElement('button');
       button.type = 'button';
@@ -204,10 +168,7 @@
       image.src = imageData.url;
       image.alt = '';
       image.loading = 'lazy';
-      image.onerror = () => {
-        button.classList.add('image-load-error');
-        button.setAttribute('title', 'Image failed to load');
-      };
+      image.decoding = 'async';
       button.appendChild(image);
       button.addEventListener('click', () => showGalleryImage(index));
       galleryThumbnails.appendChild(button);
@@ -215,40 +176,27 @@
     showGalleryImage(0);
   }
 
-  async function openServiceGallery(slug) {
-    const title = titleFromCard(slug);
-    setGalleryLoading(title);
+  function openServiceGallery(slug) {
+    const gallery = galleryCache.get(slug) || { slug, title: titleFromSlug(slug), images: [] };
+    setGalleryLoading(gallery.title);
     galleryDialog.showModal();
     document.body.classList.add('gallery-open');
-    const gallery = await getGallery(slug);
-    renderGallery(gallery || { title, images: [] });
+    renderGallery(gallery);
   }
 
-  document.querySelectorAll('[data-gallery]').forEach(card => {
-    card.addEventListener('click', () => openServiceGallery(card.dataset.gallery));
-  });
   document.getElementById('galleryPrev')?.addEventListener('click', () => showGalleryImage(activeIndex - 1));
   document.getElementById('galleryNext')?.addEventListener('click', () => showGalleryImage(activeIndex + 1));
   document.getElementById('galleryDialogClose')?.addEventListener('click', () => galleryDialog.close());
   galleryDialog?.addEventListener('close', () => document.body.classList.remove('gallery-open'));
-  galleryDialog?.addEventListener('click', event => {
-    if (event.target === galleryDialog) galleryDialog.close();
-  });
+  galleryDialog?.addEventListener('click', event => { if (event.target === galleryDialog) galleryDialog.close(); });
   document.addEventListener('keydown', event => {
     if (!galleryDialog?.open || !activeGallery?.images?.length) return;
     if (event.key === 'ArrowLeft') showGalleryImage(activeIndex - 1);
     if (event.key === 'ArrowRight') showGalleryImage(activeIndex + 1);
+    if (event.key === 'Escape') galleryDialog.close();
   });
 
-  fetchAllGalleries();
-
-  // Keep the gallery synchronized with the generated manifest without requiring a page reload.
-  const galleryRefreshInterval = setInterval(fetchAllGalleries, 30000);
-  window.addEventListener('focus', fetchAllGalleries);
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') fetchAllGalleries();
-  });
-  window.addEventListener('beforeunload', () => clearInterval(galleryRefreshInterval), { once: true });
+  loadGalleryManifest();
 
   const year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();

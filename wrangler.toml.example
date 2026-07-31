@@ -1,0 +1,12 @@
+name = "az-junk-brothers"
+compatibility_date = "2026-07-31"
+pages_build_output_dir = "."
+
+[[r2_buckets]]
+binding = "GALLERY_BUCKET"
+bucket_name = "YOUR_R2_BUCKET_NAME"
+
+[vars]
+# Use the public R2 custom domain or the public r2.dev URL.
+# Do not add a trailing slash.
+GALLERY_PUBLIC_BASE_URL = "https://gallery.azjunkbrothers.com"
