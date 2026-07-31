@@ -277,14 +277,21 @@ body.gallery-open{overflow:hidden}
 }
 
 @media (max-width:1100px){
-    .gallery-category-grid{
-        grid-template-columns:repeat(2,minmax(300px,340px));
+    .gallery-category-card{
+        width:min(420px,100%);
+        max-width:420px;
     }
 }
 
 @media (max-width:768px){
     .gallery-category-grid{
-        grid-template-columns:minmax(300px,420px);
+        margin:30px auto;
+        padding:0 14px;
+    }
+
+    .gallery-category-card{
+        width:100%;
+        max-width:420px;
     }
 }
 .gallery-loading-card{grid-column:1/-1;padding:34px;border:1px dashed rgba(13,37,67,.2);border-radius:18px;text-align:center;background:#fff;color:#657587}
