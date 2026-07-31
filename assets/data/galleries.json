@@ -2,129 +2,12 @@
   "generated": true,
   "galleries": [
     {
-      "slug": "appliances-and-heavy-items",
-      "title": "Appliances & Heavy Items",
-      "icon": "\u25a3",
-      "count": 3,
-      "cover": "/assets/images/services/appliances-and-heavy-items/appliances-and-heavy-items-1.svg",
-      "images": [
-        {
-          "url": "/assets/images/services/appliances-and-heavy-items/appliances-and-heavy-items-1.svg",
-          "name": "Appliances And Heavy Items 1"
-        },
-        {
-          "url": "/assets/images/services/appliances-and-heavy-items/appliances-and-heavy-items-2.svg",
-          "name": "Appliances And Heavy Items 2"
-        },
-        {
-          "url": "/assets/images/services/appliances-and-heavy-items/appliances-and-heavy-items-3.svg",
-          "name": "Appliances And Heavy Items 3"
-        }
-      ]
-    },
-    {
-      "slug": "business-and-office",
-      "title": "Business & Office",
-      "icon": "\u25a4",
-      "count": 3,
-      "cover": "/assets/images/services/business-and-office/business-and-office-1.svg",
-      "images": [
-        {
-          "url": "/assets/images/services/business-and-office/business-and-office-1.svg",
-          "name": "Business And Office 1"
-        },
-        {
-          "url": "/assets/images/services/business-and-office/business-and-office-2.svg",
-          "name": "Business And Office 2"
-        },
-        {
-          "url": "/assets/images/services/business-and-office/business-and-office-3.svg",
-          "name": "Business And Office 3"
-        }
-      ]
-    },
-    {
-      "slug": "construction-debris",
-      "title": "Construction Debris",
-      "icon": "\u25a7",
-      "count": 3,
-      "cover": "/assets/images/services/construction-debris/construction-debris-1.svg",
-      "images": [
-        {
-          "url": "/assets/images/services/construction-debris/construction-debris-1.svg",
-          "name": "Construction Debris 1"
-        },
-        {
-          "url": "/assets/images/services/construction-debris/construction-debris-2.svg",
-          "name": "Construction Debris 2"
-        },
-        {
-          "url": "/assets/images/services/construction-debris/construction-debris-3.svg",
-          "name": "Construction Debris 3"
-        }
-      ]
-    },
-    {
-      "slug": "estate-cleanouts",
-      "title": "Estate Cleanouts",
-      "icon": "\u25c7",
-      "count": 3,
-      "cover": "/assets/images/services/estate-cleanouts/estate-cleanouts-1.svg",
-      "images": [
-        {
-          "url": "/assets/images/services/estate-cleanouts/estate-cleanouts-1.svg",
-          "name": "Estate Cleanouts 1"
-        },
-        {
-          "url": "/assets/images/services/estate-cleanouts/estate-cleanouts-2.svg",
-          "name": "Estate Cleanouts 2"
-        },
-        {
-          "url": "/assets/images/services/estate-cleanouts/estate-cleanouts-3.svg",
-          "name": "Estate Cleanouts 3"
-        }
-      ]
-    },
-    {
-      "slug": "furniture-removal",
-      "title": "Furniture Removal",
-      "icon": "\u25b1",
-      "count": 3,
-      "cover": "/assets/images/services/furniture-removal/furniture-removal-1.svg",
-      "images": [
-        {
-          "url": "/assets/images/services/furniture-removal/furniture-removal-1.svg",
-          "name": "Furniture Removal 1"
-        },
-        {
-          "url": "/assets/images/services/furniture-removal/furniture-removal-2.svg",
-          "name": "Furniture Removal 2"
-        },
-        {
-          "url": "/assets/images/services/furniture-removal/furniture-removal-3.svg",
-          "name": "Furniture Removal 3"
-        }
-      ]
-    },
-    {
       "slug": "home-cleanouts",
       "title": "Home Cleanouts",
       "icon": "\u2302",
-      "count": 5,
-      "cover": "/assets/images/services/home-cleanouts/home-cleanouts-1.svg",
+      "count": 2,
+      "cover": "/assets/images/services/home-cleanouts/IMG_1294.jpeg",
       "images": [
-        {
-          "url": "/assets/images/services/home-cleanouts/home-cleanouts-1.svg",
-          "name": "Home Cleanouts 1"
-        },
-        {
-          "url": "/assets/images/services/home-cleanouts/home-cleanouts-2.svg",
-          "name": "Home Cleanouts 2"
-        },
-        {
-          "url": "/assets/images/services/home-cleanouts/home-cleanouts-3.svg",
-          "name": "Home Cleanouts 3"
-        },
         {
           "url": "/assets/images/services/home-cleanouts/IMG_1294.jpeg",
           "name": "Img 1294"
@@ -132,27 +15,6 @@
         {
           "url": "/assets/images/services/home-cleanouts/IMG_1296.jpeg",
           "name": "Img 1296"
-        }
-      ]
-    },
-    {
-      "slug": "sheds-and-small-structures",
-      "title": "Sheds & Small Structures",
-      "icon": "\u25b3",
-      "count": 3,
-      "cover": "/assets/images/services/sheds-and-small-structures/sheds-and-small-structures-1.svg",
-      "images": [
-        {
-          "url": "/assets/images/services/sheds-and-small-structures/sheds-and-small-structures-1.svg",
-          "name": "Sheds And Small Structures 1"
-        },
-        {
-          "url": "/assets/images/services/sheds-and-small-structures/sheds-and-small-structures-2.svg",
-          "name": "Sheds And Small Structures 2"
-        },
-        {
-          "url": "/assets/images/services/sheds-and-small-structures/sheds-and-small-structures-3.svg",
-          "name": "Sheds And Small Structures 3"
         }
       ]
     },
