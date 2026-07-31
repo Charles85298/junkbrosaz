@@ -84,7 +84,7 @@
         <span class="gallery-category-media">${cover}<span class="gallery-count-badge">${count}</span></span>
         <span class="gallery-category-copy">
           <span class="gallery-category-icon" aria-hidden="true">${escapeHtml(gallery.icon || '•')}</span>
-          <span><strong>${escapeHtml(gallery.title)}</strong><small>View completed jobs</small></span>
+          <span><strong>${escapeHtml(gallery.title)}</strong><small> View completed jobs</small></span>
           <span class="gallery-category-arrow" aria-hidden="true">→</span>
         </span>
       </button>`;
