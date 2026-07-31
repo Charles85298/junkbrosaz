@@ -8,7 +8,7 @@
 */
 window.SERVICE_GALLERIES = {
   "services": {
-    "title": "Our Service Work",
+    "title": "Our Service Work ",
     "images": []
   }
 };
