@@ -69,7 +69,7 @@
         url,
         name: `${gallery.title} ${index + 1}`
       })),
-      source: 'local'
+      source: 'local-fallback'
     };
   }
 
@@ -78,17 +78,24 @@
       || slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
+  async function loadGalleryManifest() {
+    const response = await fetch(`/assets/data/gallery-manifest.json?t=${Date.now()}`, {
+      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error(`Gallery manifest returned ${response.status}`);
+    return response.json();
+  }
+
   async function fetchAllGalleries() {
     try {
-      const response = await fetch(`/api/gallery?t=${Date.now()}`, { headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' }, cache: 'no-store' });
-      if (!response.ok) throw new Error(`Gallery API returned ${response.status}`);
-      const data = await response.json();
+      const data = await loadGalleryManifest();
 
-      Object.entries(data.galleries || {}).forEach(([slug, images]) => {
+      Object.entries(data.galleries || {}).forEach(([slug, gallery]) => {
         galleryCache.set(slug, {
-          title: titleFromCard(slug),
-          images,
-          source: 'r2'
+          title: gallery.title || titleFromCard(slug),
+          images: Array.isArray(gallery.images) ? gallery.images : [],
+          source: 'github-manifest'
         });
       });
 
@@ -106,22 +113,22 @@
         }
       });
     } catch (error) {
-      console.info('Live R2 galleries are unavailable; using local fallback images.', error);
+      console.info('Dynamic gallery manifest is unavailable; using local fallback images.', error);
     }
   }
 
   async function getGallery(slug) {
+    if (galleryCache.has(slug)) return galleryCache.get(slug);
+
     try {
-      const response = await fetch(`/api/gallery?service=${encodeURIComponent(slug)}&t=${Date.now()}`, {
-        headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
-        cache: 'no-store'
-      });
-      if (!response.ok) throw new Error(`Gallery API returned ${response.status}`);
-      const data = await response.json();
+      const data = await loadGalleryManifest();
+      const item = data.galleries?.[slug];
+      if (!item) return localFallback(slug);
+
       const gallery = {
-        title: titleFromCard(slug),
-        images: data.images || [],
-        source: 'r2'
+        title: item.title || titleFromCard(slug),
+        images: Array.isArray(item.images) ? item.images : [],
+        source: 'github-manifest'
       };
       galleryCache.set(slug, gallery);
       return gallery;
@@ -235,7 +242,7 @@
 
   fetchAllGalleries();
 
-  // Keep the gallery synchronized with R2 without requiring a page reload.
+  // Keep the gallery synchronized with the generated manifest without requiring a page reload.
   const galleryRefreshInterval = setInterval(fetchAllGalleries, 30000);
   window.addEventListener('focus', fetchAllGalleries);
   document.addEventListener('visibilitychange', () => {
