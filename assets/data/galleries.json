@@ -110,7 +110,7 @@
       "slug": "home-cleanouts",
       "title": "Home Cleanouts",
       "icon": "\u2302",
-      "count": 3,
+      "count": 5,
       "cover": "/assets/images/services/home-cleanouts/home-cleanouts-1.svg",
       "images": [
         {
@@ -124,6 +124,14 @@
         {
           "url": "/assets/images/services/home-cleanouts/home-cleanouts-3.svg",
           "name": "Home Cleanouts 3"
+        },
+        {
+          "url": "/assets/images/services/home-cleanouts/IMG_1294.jpeg",
+          "name": "Img 1294"
+        },
+        {
+          "url": "/assets/images/services/home-cleanouts/IMG_1296.jpeg",
+          "name": "Img 1296"
         }
       ]
     },
@@ -152,12 +160,16 @@
       "slug": "yard-and-outdoor-debris",
       "title": "Yard & Outdoor Debris",
       "icon": "\u2667",
-      "count": 1,
+      "count": 2,
       "cover": "/assets/images/services/yard-and-outdoor-debris/photo-520_singular_display_fullPicture.jpeg",
       "images": [
         {
           "url": "/assets/images/services/yard-and-outdoor-debris/photo-520_singular_display_fullPicture.jpeg",
           "name": "Photo 520 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/yard-and-outdoor-debris/photo-666_singular_display_fullPicture.jpeg",
+          "name": "Photo 666 Singular Display Fullpicture"
         }
       ]
     }
