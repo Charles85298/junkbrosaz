@@ -2,12 +2,33 @@
   "generated": true,
   "galleries": [
     {
+      "slug": "appliances-and-heavy-items",
+      "title": "Appliances & Heavy Items",
+      "icon": "\u25a3",
+      "count": 2,
+      "cover": "/assets/images/services/appliances-and-heavy-items/od_photo-1338_singular_display_fullPicture.jpeg",
+      "images": [
+        {
+          "url": "/assets/images/services/appliances-and-heavy-items/od_photo-1338_singular_display_fullPicture.jpeg",
+          "name": "Od Photo 1338 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/appliances-and-heavy-items/od_photo-1340_singular_display_fullPicture.jpeg",
+          "name": "Od Photo 1340 Singular Display Fullpicture"
+        }
+      ]
+    },
+    {
       "slug": "home-cleanouts",
       "title": "Home Cleanouts",
       "icon": "\u2302",
-      "count": 2,
-      "cover": "/assets/images/services/home-cleanouts/IMG_1294.jpeg",
+      "count": 4,
+      "cover": "/assets/images/services/home-cleanouts/361FBB7B-0A6E-48E4-89AB-C10372BCC361.jpeg",
       "images": [
+        {
+          "url": "/assets/images/services/home-cleanouts/361FBB7B-0A6E-48E4-89AB-C10372BCC361.jpeg",
+          "name": "361Fbb7B 0A6E 48E4 89Ab C10372Bcc361"
+        },
         {
           "url": "/assets/images/services/home-cleanouts/IMG_1294.jpeg",
           "name": "Img 1294"
@@ -15,6 +36,10 @@
         {
           "url": "/assets/images/services/home-cleanouts/IMG_1296.jpeg",
           "name": "Img 1296"
+        },
+        {
+          "url": "/assets/images/services/home-cleanouts/IMG_1354.jpeg",
+          "name": "Img 1354"
         }
       ]
     },
@@ -22,12 +47,16 @@
       "slug": "yard-and-outdoor-debris",
       "title": "Yard & Outdoor Debris",
       "icon": "\u2667",
-      "count": 2,
+      "count": 3,
       "cover": "/assets/images/services/yard-and-outdoor-debris/photo-520_singular_display_fullPicture.jpeg",
       "images": [
         {
           "url": "/assets/images/services/yard-and-outdoor-debris/photo-520_singular_display_fullPicture.jpeg",
           "name": "Photo 520 Singular Display Fullpicture"
+        },
+        {
+          "url": "/assets/images/services/yard-and-outdoor-debris/photo-539_singular_display_fullPicture.jpeg",
+          "name": "Photo 539 Singular Display Fullpicture"
         },
         {
           "url": "/assets/images/services/yard-and-outdoor-debris/photo-666_singular_display_fullPicture.jpeg",
