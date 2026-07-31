@@ -272,3 +272,11 @@ body.gallery-open{overflow:hidden}
   object-fit: contain;
   background: #000;
 }
+
+/* Accepted payment methods */
+.payment-options{margin-top:26px;padding:20px;border:1px solid rgba(255,255,255,.15);border-radius:18px;background:rgba(255,255,255,.07)}
+.payment-label{display:block;margin-bottom:12px;color:var(--gold);font-size:.78rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.payment-methods{display:flex;flex-wrap:wrap;gap:9px}
+.payment-methods span{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-size:.86rem;font-weight:800}
+.payment-options small{display:block;margin-top:13px;color:#b9cbe0}
+
