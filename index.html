@@ -198,17 +198,21 @@
           <p>Browse recent service jobs below.</p>
         </div>
 
-        <div class="gallery-carousel reveal" aria-label="Service gallery carousel">
-          <button class="gallery-carousel-arrow gallery-carousel-prev" id="galleryCarouselPrev" type="button" aria-label="Show previous service galleries">‹</button>
+        <div class="photo-carousel reveal" id="photoCarousel" aria-label="Recent project photos">
+          <button class="photo-carousel-arrow photo-carousel-prev" id="photoCarouselPrev" type="button" aria-label="Show previous photo">‹</button>
 
-          <div class="gallery-category-grid" id="galleryCategoryGrid" aria-live="polite" tabindex="0">
-            <div class="gallery-loading-card">Loading service photos…</div>
-          </div>
+          <button class="photo-carousel-stage" id="photoCarouselStage" type="button" aria-label="Open current project gallery">
+            <img id="photoCarouselImage" src="" alt="" loading="eager" decoding="async">
+            <span class="photo-carousel-overlay">
+              <strong id="photoCarouselTitle">Loading project photos…</strong>
+              <small id="photoCarouselCounter"></small>
+            </span>
+          </button>
 
-          <button class="gallery-carousel-arrow gallery-carousel-next" id="galleryCarouselNext" type="button" aria-label="Show more service galleries">›</button>
+          <button class="photo-carousel-arrow photo-carousel-next" id="photoCarouselNext" type="button" aria-label="Show next photo">›</button>
         </div>
 
-        <div class="gallery-carousel-dots" id="galleryCarouselDots" aria-label="Service gallery pages"></div>
+        <div class="photo-carousel-dots" id="photoCarouselDots" aria-label="Project photo navigation"></div>
 
         <div class="gallery-trust-strip reveal" aria-label="Why customers choose AZ Junk Brothers">
           <span><b>✓</b> Free estimates</span>
