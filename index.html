@@ -198,9 +198,17 @@
           <p>Browse recent service jobs below.</p>
         </div>
 
-        <div class="gallery-category-grid" id="galleryCategoryGrid" aria-live="polite">
-          <div class="gallery-loading-card">Loading service photos…</div>
+        <div class="gallery-carousel reveal" aria-label="Service gallery carousel">
+          <button class="gallery-carousel-arrow gallery-carousel-prev" id="galleryCarouselPrev" type="button" aria-label="Show previous service galleries">‹</button>
+
+          <div class="gallery-category-grid" id="galleryCategoryGrid" aria-live="polite" tabindex="0">
+            <div class="gallery-loading-card">Loading service photos…</div>
+          </div>
+
+          <button class="gallery-carousel-arrow gallery-carousel-next" id="galleryCarouselNext" type="button" aria-label="Show more service galleries">›</button>
         </div>
+
+        <div class="gallery-carousel-dots" id="galleryCarouselDots" aria-label="Service gallery pages"></div>
 
         <div class="gallery-trust-strip reveal" aria-label="Why customers choose AZ Junk Brothers">
           <span><b>✓</b> Free estimates</span>
