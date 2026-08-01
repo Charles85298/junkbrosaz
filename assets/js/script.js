@@ -56,201 +56,191 @@
   const galleryCounter = document.getElementById('galleryCounter');
   const galleryCaption = document.getElementById('galleryCaption');
   const galleryThumbnails = document.getElementById('galleryThumbnails');
-  const galleryGrid = document.getElementById('galleryCategoryGrid');
-  const galleryCarouselPrev = document.getElementById('galleryCarouselPrev');
-  const galleryCarouselNext = document.getElementById('galleryCarouselNext');
-  const galleryCarouselDots = document.getElementById('galleryCarouselDots');
-  const galleryMap = new Map();
-  let activeGallery = null;
-  let activeIndex = 0;
 
-  function escapeHtml(value = '') {
-    return String(value).replace(/[&<>"']/g, char => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-    })[char]);
+  const photoCarousel = document.getElementById('photoCarousel');
+  const photoCarouselStage = document.getElementById('photoCarouselStage');
+  const photoCarouselImage = document.getElementById('photoCarouselImage');
+  const photoCarouselTitle = document.getElementById('photoCarouselTitle');
+  const photoCarouselCounter = document.getElementById('photoCarouselCounter');
+  const photoCarouselPrev = document.getElementById('photoCarouselPrev');
+  const photoCarouselNext = document.getElementById('photoCarouselNext');
+  const photoCarouselDots = document.getElementById('photoCarouselDots');
+
+  let serviceGallery = null;
+  let carouselIndex = 0;
+  let dialogIndex = 0;
+
+  function imageUrl(imageData) {
+    return imageData?.url || imageData?.src || '';
   }
 
-  function getCarouselStep() {
-    const card = galleryGrid?.querySelector('.gallery-category-card');
-    if (!card || !galleryGrid) return 320;
-    const styles = window.getComputedStyle(galleryGrid);
-    const gap = Number.parseFloat(styles.columnGap) || 24;
-    return card.getBoundingClientRect().width + gap;
+  function imageName(imageData, index) {
+    const raw = imageData?.name || imageData?.alt || '';
+    if (!raw || /^img\s*\d+$/i.test(raw) || /^[a-f0-9 -]{20,}$/i.test(raw)) {
+      return `Service job photo ${index + 1}`;
+    }
+    return raw;
   }
 
-  function getVisibleCarouselCards() {
-    if (!galleryGrid) return 1;
-    const step = getCarouselStep();
-    return Math.max(1, Math.round(galleryGrid.clientWidth / step));
+  function setCarouselMessage(message) {
+    if (photoCarouselTitle) photoCarouselTitle.textContent = message;
+    if (photoCarouselCounter) photoCarouselCounter.textContent = '';
+    if (photoCarouselImage) {
+      photoCarouselImage.hidden = true;
+      photoCarouselImage.removeAttribute('src');
+    }
+    if (photoCarouselPrev) photoCarouselPrev.disabled = true;
+    if (photoCarouselNext) photoCarouselNext.disabled = true;
   }
 
-  function updateGalleryCarousel() {
-    if (!galleryGrid) return;
-    const maxScroll = Math.max(0, galleryGrid.scrollWidth - galleryGrid.clientWidth);
-    if (galleryCarouselPrev) galleryCarouselPrev.disabled = galleryGrid.scrollLeft <= 5;
-    if (galleryCarouselNext) galleryCarouselNext.disabled = galleryGrid.scrollLeft >= maxScroll - 5;
-
-    const step = getCarouselStep();
-    const activeIndex = Math.max(0, Math.round(galleryGrid.scrollLeft / step));
-    galleryCarouselDots?.querySelectorAll('.gallery-carousel-dot').forEach((dot, index) => {
-      dot.classList.toggle('active', index === activeIndex);
-      dot.setAttribute('aria-current', index === activeIndex ? 'true' : 'false');
-    });
-  }
-
-  function buildGalleryCarouselDots() {
-    if (!galleryGrid || !galleryCarouselDots) return;
-    const cards = [...galleryGrid.querySelectorAll('.gallery-category-card')];
-    galleryCarouselDots.innerHTML = '';
-
-    const visibleCards = getVisibleCarouselCards();
-    const pageCount = Math.max(1, cards.length - visibleCards + 1);
-    cards.slice(0, pageCount).forEach((card, index) => {
+  function renderCarouselDots() {
+    if (!photoCarouselDots) return;
+    photoCarouselDots.innerHTML = '';
+    const images = serviceGallery?.images || [];
+    images.forEach((imageData, index) => {
       const dot = document.createElement('button');
       dot.type = 'button';
-      dot.className = 'gallery-carousel-dot';
-      dot.setAttribute('aria-label', `Show service gallery group ${index + 1}`);
-      dot.addEventListener('click', () => {
-        galleryGrid.scrollTo({ left: index * getCarouselStep(), behavior: 'smooth' });
-      });
-      galleryCarouselDots.appendChild(dot);
+      dot.className = 'photo-carousel-dot';
+      dot.setAttribute('aria-label', `Show project photo ${index + 1}`);
+      dot.addEventListener('click', () => showCarouselImage(index));
+      photoCarouselDots.appendChild(dot);
     });
-
-    const showControls = cards.length > visibleCards;
-    if (galleryCarouselPrev) galleryCarouselPrev.hidden = !showControls;
-    if (galleryCarouselNext) galleryCarouselNext.hidden = !showControls;
-    galleryCarouselDots.hidden = !showControls;
-    updateGalleryCarousel();
+    photoCarouselDots.hidden = images.length <= 1;
   }
 
-  function renderGalleryCards(galleries) {
-    if (!galleryGrid) return;
-    if (!galleries.length) {
-      galleryGrid.innerHTML = '<div class="gallery-loading-card">No service photos were found.</div>';
-      return;
+  function showCarouselImage(index) {
+    const images = serviceGallery?.images || [];
+    if (!images.length) return;
+
+    carouselIndex = (index + images.length) % images.length;
+    const selected = images[carouselIndex];
+    const url = imageUrl(selected);
+
+    if (photoCarouselImage) {
+      photoCarouselImage.hidden = false;
+      photoCarouselImage.src = url;
+      photoCarouselImage.alt = imageName(selected, carouselIndex);
     }
+    if (photoCarouselTitle) photoCarouselTitle.textContent = serviceGallery.title || 'Our Service Work';
+    if (photoCarouselCounter) photoCarouselCounter.textContent = `${carouselIndex + 1} of ${images.length} photos`;
+    if (photoCarouselPrev) photoCarouselPrev.disabled = images.length <= 1;
+    if (photoCarouselNext) photoCarouselNext.disabled = images.length <= 1;
 
-    galleryGrid.innerHTML = galleries.map((gallery, index) => {
-      galleryMap.set(gallery.slug, gallery);
-      const cover = gallery.cover
-        ? `<img src="${escapeHtml(gallery.cover)}" alt="${escapeHtml(gallery.title)} project" loading="lazy" decoding="async">`
-        : `<div class="gallery-card-placeholder" aria-hidden="true">${escapeHtml(gallery.icon || '•')}</div>`;
-      const count = `${gallery.count} photo${gallery.count === 1 ? '' : 's'}`;
-      return `<button class="gallery-category-card reveal visible" type="button" data-gallery="${escapeHtml(gallery.slug)}" aria-label="Open ${escapeHtml(gallery.title)} gallery">
-        <span class="gallery-category-media">${cover}<span class="gallery-count-badge">${count}</span></span>
-        <span class="gallery-category-copy">
-          <span class="gallery-category-icon" aria-hidden="true">${escapeHtml(gallery.icon || '•')}</span>
-          <span><strong>${escapeHtml(gallery.title)}</strong><small> View completed jobs</small></span>
-          <span class="gallery-category-arrow" aria-hidden="true">→</span>
-        </span>
-      </button>`;
-    }).join('');
-
-    galleryGrid.querySelectorAll('[data-gallery]').forEach(card => {
-      card.addEventListener('click', () => openServiceGallery(card.dataset.gallery));
-    });
-
-    buildGalleryCarouselDots();
-  }
-
-  async function loadGalleryManifest() {
-    try {
-      const response = await fetch(`/assets/data/galleries.json?v=${Date.now()}`, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`Gallery manifest returned ${response.status}`);
-      const data = await response.json();
-      renderGalleryCards(Array.isArray(data.galleries) ? data.galleries : []);
-    } catch (error) {
-      console.error(error);
-      if (galleryGrid) galleryGrid.innerHTML = '<div class="gallery-loading-card">The galleries are temporarily unavailable. Please refresh the page.</div>';
-    }
-  }
-
-  function showGalleryImage(index) {
-    if (!activeGallery?.images?.length) return;
-    const images = activeGallery.images;
-    activeIndex = (index + images.length) % images.length;
-    const selected = images[activeIndex];
-    galleryMainImage.hidden = false;
-    galleryMainImage.src = selected.url;
-    galleryMainImage.alt = `${activeGallery.title} photo ${activeIndex + 1}`;
-    galleryCounter.textContent = `${activeIndex + 1} / ${images.length}`;
-    galleryCaption.textContent = selected.name || activeGallery.title;
-    galleryThumbnails.querySelectorAll('button').forEach((button, i) => {
-      button.classList.toggle('active', i === activeIndex);
-      button.setAttribute('aria-current', i === activeIndex ? 'true' : 'false');
-      if (i === activeIndex) button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    photoCarouselDots?.querySelectorAll('.photo-carousel-dot').forEach((dot, dotIndex) => {
+      const active = dotIndex === carouselIndex;
+      dot.classList.toggle('active', active);
+      dot.setAttribute('aria-current', active ? 'true' : 'false');
     });
   }
 
-  function openServiceGallery(slug) {
-    const gallery = galleryMap.get(slug);
-    if (!gallery || !galleryDialog) return;
-    activeGallery = gallery;
-    activeIndex = 0;
-    galleryTitle.textContent = gallery.title;
+  function buildDialogThumbnails() {
+    if (!galleryThumbnails || !serviceGallery) return;
     galleryThumbnails.innerHTML = '';
 
-    if (!gallery.images?.length) {
-      galleryMainImage.hidden = true;
-      galleryMainImage.removeAttribute('src');
-      galleryCounter.textContent = '0 photos';
-      galleryCaption.textContent = 'Photos for this service are coming soon.';
-    } else {
-      gallery.images.forEach((imageData, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.setAttribute('aria-label', `View photo ${index + 1}`);
-        const image = document.createElement('img');
-        image.src = imageData.url;
-        image.alt = '';
-        image.loading = 'lazy';
-        image.decoding = 'async';
-        button.appendChild(image);
-        button.addEventListener('click', () => showGalleryImage(index));
-        galleryThumbnails.appendChild(button);
-      });
-      showGalleryImage(0);
-    }
+    serviceGallery.images.forEach((imageData, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', `View photo ${index + 1}`);
 
+      const image = document.createElement('img');
+      image.src = imageUrl(imageData);
+      image.alt = '';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+
+      button.appendChild(image);
+      button.addEventListener('click', () => showDialogImage(index));
+      galleryThumbnails.appendChild(button);
+    });
+  }
+
+  function showDialogImage(index) {
+    const images = serviceGallery?.images || [];
+    if (!images.length || !galleryMainImage) return;
+
+    dialogIndex = (index + images.length) % images.length;
+    const selected = images[dialogIndex];
+    galleryMainImage.hidden = false;
+    galleryMainImage.src = imageUrl(selected);
+    galleryMainImage.alt = imageName(selected, dialogIndex);
+    if (galleryCounter) galleryCounter.textContent = `${dialogIndex + 1} / ${images.length}`;
+    if (galleryCaption) galleryCaption.textContent = imageName(selected, dialogIndex);
+
+    galleryThumbnails?.querySelectorAll('button').forEach((button, thumbIndex) => {
+      const active = thumbIndex === dialogIndex;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-current', active ? 'true' : 'false');
+      if (active) button.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+  }
+
+  function openGallery(index = carouselIndex) {
+    if (!galleryDialog || !serviceGallery?.images?.length) return;
+    if (galleryTitle) galleryTitle.textContent = serviceGallery.title || 'Our Service Work';
+    buildDialogThumbnails();
+    showDialogImage(index);
     galleryDialog.showModal();
     document.body.classList.add('gallery-open');
   }
 
-  document.getElementById('galleryPrev')?.addEventListener('click', () => showGalleryImage(activeIndex - 1));
-  document.getElementById('galleryNext')?.addEventListener('click', () => showGalleryImage(activeIndex + 1));
-  document.getElementById('galleryDialogClose')?.addEventListener('click', () => galleryDialog.close());
+  function initializeGallery(galleries) {
+    serviceGallery = galleries.find(gallery => gallery.slug === 'services') || galleries[0] || null;
+    if (!serviceGallery?.images?.length) {
+      setCarouselMessage('No service photos were found.');
+      return;
+    }
+    renderCarouselDots();
+    showCarouselImage(0);
+  }
+
+  async function loadGalleryManifest() {
+    setCarouselMessage('Loading project photos…');
+    try {
+      const manifestUrl = new URL('assets/data/galleries.json', document.baseURI);
+      manifestUrl.searchParams.set('v', Date.now().toString());
+      const response = await fetch(manifestUrl, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Gallery manifest returned ${response.status}`);
+      const data = await response.json();
+      initializeGallery(Array.isArray(data.galleries) ? data.galleries : []);
+    } catch (error) {
+      console.error('Unable to load the service gallery:', error);
+      const fallback = window.SERVICE_GALLERIES?.services;
+      if (fallback?.images?.length) {
+        initializeGallery([{ slug: 'services', ...fallback }]);
+      } else {
+        setCarouselMessage('The project photos are temporarily unavailable.');
+      }
+    }
+  }
+
+  photoCarouselPrev?.addEventListener('click', () => showCarouselImage(carouselIndex - 1));
+  photoCarouselNext?.addEventListener('click', () => showCarouselImage(carouselIndex + 1));
+  photoCarouselStage?.addEventListener('click', () => openGallery(carouselIndex));
+
+  photoCarousel?.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      showCarouselImage(carouselIndex - 1);
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      showCarouselImage(carouselIndex + 1);
+    }
+  });
+
+  document.getElementById('galleryPrev')?.addEventListener('click', () => showDialogImage(dialogIndex - 1));
+  document.getElementById('galleryNext')?.addEventListener('click', () => showDialogImage(dialogIndex + 1));
+  document.getElementById('galleryDialogClose')?.addEventListener('click', () => galleryDialog?.close());
   galleryDialog?.addEventListener('close', () => document.body.classList.remove('gallery-open'));
   galleryDialog?.addEventListener('click', event => {
     if (event.target === galleryDialog) galleryDialog.close();
   });
-  document.addEventListener('keydown', event => {
-    if (!galleryDialog?.open || !activeGallery?.images?.length) return;
-    if (event.key === 'ArrowLeft') showGalleryImage(activeIndex - 1);
-    if (event.key === 'ArrowRight') showGalleryImage(activeIndex + 1);
-  });
 
-  galleryCarouselPrev?.addEventListener('click', () => {
-    galleryGrid?.scrollBy({ left: -getCarouselStep(), behavior: 'smooth' });
-  });
-  galleryCarouselNext?.addEventListener('click', () => {
-    galleryGrid?.scrollBy({ left: getCarouselStep(), behavior: 'smooth' });
-  });
-  galleryGrid?.addEventListener('scroll', () => {
-    window.requestAnimationFrame(updateGalleryCarousel);
-  }, { passive: true });
-  galleryGrid?.addEventListener('keydown', event => {
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      galleryGrid.scrollBy({ left: -getCarouselStep(), behavior: 'smooth' });
-    }
-    if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      galleryGrid.scrollBy({ left: getCarouselStep(), behavior: 'smooth' });
-    }
-  });
-  window.addEventListener('resize', () => {
-    window.clearTimeout(window.__azjbCarouselResizeTimer);
-    window.__azjbCarouselResizeTimer = window.setTimeout(buildGalleryCarouselDots, 120);
+  document.addEventListener('keydown', event => {
+    if (!galleryDialog?.open || !serviceGallery?.images?.length) return;
+    if (event.key === 'ArrowLeft') showDialogImage(dialogIndex - 1);
+    if (event.key === 'ArrowRight') showDialogImage(dialogIndex + 1);
+    if (event.key === 'Escape') galleryDialog.close();
   });
 
   loadGalleryManifest();
