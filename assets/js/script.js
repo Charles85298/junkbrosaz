@@ -57,6 +57,9 @@
   const galleryCaption = document.getElementById('galleryCaption');
   const galleryThumbnails = document.getElementById('galleryThumbnails');
   const galleryGrid = document.getElementById('galleryCategoryGrid');
+  const galleryCarouselPrev = document.getElementById('galleryCarouselPrev');
+  const galleryCarouselNext = document.getElementById('galleryCarouselNext');
+  const galleryCarouselDots = document.getElementById('galleryCarouselDots');
   const galleryMap = new Map();
   let activeGallery = null;
   let activeIndex = 0;
@@ -65,6 +68,59 @@
     return String(value).replace(/[&<>"']/g, char => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
     })[char]);
+  }
+
+  function getCarouselStep() {
+    const card = galleryGrid?.querySelector('.gallery-category-card');
+    if (!card || !galleryGrid) return 320;
+    const styles = window.getComputedStyle(galleryGrid);
+    const gap = Number.parseFloat(styles.columnGap) || 24;
+    return card.getBoundingClientRect().width + gap;
+  }
+
+  function getVisibleCarouselCards() {
+    if (!galleryGrid) return 1;
+    const step = getCarouselStep();
+    return Math.max(1, Math.round(galleryGrid.clientWidth / step));
+  }
+
+  function updateGalleryCarousel() {
+    if (!galleryGrid) return;
+    const maxScroll = Math.max(0, galleryGrid.scrollWidth - galleryGrid.clientWidth);
+    if (galleryCarouselPrev) galleryCarouselPrev.disabled = galleryGrid.scrollLeft <= 5;
+    if (galleryCarouselNext) galleryCarouselNext.disabled = galleryGrid.scrollLeft >= maxScroll - 5;
+
+    const step = getCarouselStep();
+    const activeIndex = Math.max(0, Math.round(galleryGrid.scrollLeft / step));
+    galleryCarouselDots?.querySelectorAll('.gallery-carousel-dot').forEach((dot, index) => {
+      dot.classList.toggle('active', index === activeIndex);
+      dot.setAttribute('aria-current', index === activeIndex ? 'true' : 'false');
+    });
+  }
+
+  function buildGalleryCarouselDots() {
+    if (!galleryGrid || !galleryCarouselDots) return;
+    const cards = [...galleryGrid.querySelectorAll('.gallery-category-card')];
+    galleryCarouselDots.innerHTML = '';
+
+    const visibleCards = getVisibleCarouselCards();
+    const pageCount = Math.max(1, cards.length - visibleCards + 1);
+    cards.slice(0, pageCount).forEach((card, index) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'gallery-carousel-dot';
+      dot.setAttribute('aria-label', `Show service gallery group ${index + 1}`);
+      dot.addEventListener('click', () => {
+        galleryGrid.scrollTo({ left: index * getCarouselStep(), behavior: 'smooth' });
+      });
+      galleryCarouselDots.appendChild(dot);
+    });
+
+    const showControls = cards.length > visibleCards;
+    if (galleryCarouselPrev) galleryCarouselPrev.hidden = !showControls;
+    if (galleryCarouselNext) galleryCarouselNext.hidden = !showControls;
+    galleryCarouselDots.hidden = !showControls;
+    updateGalleryCarousel();
   }
 
   function renderGalleryCards(galleries) {
@@ -93,6 +149,8 @@
     galleryGrid.querySelectorAll('[data-gallery]').forEach(card => {
       card.addEventListener('click', () => openServiceGallery(card.dataset.gallery));
     });
+
+    buildGalleryCarouselDots();
   }
 
   async function loadGalleryManifest() {
@@ -169,6 +227,30 @@
     if (!galleryDialog?.open || !activeGallery?.images?.length) return;
     if (event.key === 'ArrowLeft') showGalleryImage(activeIndex - 1);
     if (event.key === 'ArrowRight') showGalleryImage(activeIndex + 1);
+  });
+
+  galleryCarouselPrev?.addEventListener('click', () => {
+    galleryGrid?.scrollBy({ left: -getCarouselStep(), behavior: 'smooth' });
+  });
+  galleryCarouselNext?.addEventListener('click', () => {
+    galleryGrid?.scrollBy({ left: getCarouselStep(), behavior: 'smooth' });
+  });
+  galleryGrid?.addEventListener('scroll', () => {
+    window.requestAnimationFrame(updateGalleryCarousel);
+  }, { passive: true });
+  galleryGrid?.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      galleryGrid.scrollBy({ left: -getCarouselStep(), behavior: 'smooth' });
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      galleryGrid.scrollBy({ left: getCarouselStep(), behavior: 'smooth' });
+    }
+  });
+  window.addEventListener('resize', () => {
+    window.clearTimeout(window.__azjbCarouselResizeTimer);
+    window.__azjbCarouselResizeTimer = window.setTimeout(buildGalleryCarouselDots, 120);
   });
 
   loadGalleryManifest();
