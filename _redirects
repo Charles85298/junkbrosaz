@@ -1,0 +1,15 @@
+# Explicit 301 redirects for legacy .html URLs that Google has indexed.
+# These override Cloudflare's default 307 "auto-trailing-slash" asset
+# handling with a permanent-redirect signal, so Google consolidates
+# the old .html URLs into the canonical clean URLs instead of flagging
+# them as redirect errors / duplicates.
+/index.html /  301
+/yard-debris-removal.html /yard-debris-removal 301
+/junk-removal-surprise-az.html /junk-removal-surprise-az 301
+/estate-cleanouts.html /estate-cleanouts 301
+/furniture-removal.html /furniture-removal 301
+/garage-cleanouts.html /garage-cleanouts 301
+/construction-debris-removal.html /construction-debris-removal 301
+/appliance-removal.html /appliance-removal 301
+/service-areas.html /service-areas 301
+/privacy-policy.html /privacy-policy 301
